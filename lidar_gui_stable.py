@@ -18,43 +18,36 @@ PLOT_UPDATE_MS = 50
 
 # ================== LIDAR THREAD ==================
 class LidarWorker(threading.Thread):
-    """
-    LIDAR'dan sürekli scan okur.
-    Hata olursa RESET ATMAZ, sadece frame drop eder.
-    """
     def __init__(self, lidar):
         super().__init__(daemon=True)
         self.lidar = lidar
-        self.running = False
         self.points = []
         self._stop_flag = False
 
     def run(self):
-        self.running = True
-        try:
-            for scan in self.lidar.iter_scans():
-                if self._stop_flag:
-                    break
+        while not self._stop_flag:
+            try:
+                # 🔁 HER SEFERİNDE YENİ iter_scans()
+                for scan in self.lidar.iter_scans():
+                    if self._stop_flag:
+                        return
 
-                pts = []
-                for (_, angle, distance) in scan:
-                    if distance > 0:
-                        rad = math.radians(angle)
-                        x = distance * math.cos(rad)
-                        y = distance * math.sin(rad)
-                        pts.append((x, y))
+                    pts = []
+                    for (_, angle, distance) in scan:
+                        if distance > 0:
+                            rad = math.radians(angle)
+                            x = distance * math.cos(rad)
+                            y = distance * math.sin(rad)
+                            pts.append((x, y))
 
-                self.points = pts
+                    self.points = pts
 
-        except Exception as e:
-            # 🔴 Burada RESET YOK!
-            print("⚠️ LIDAR stream error (ignored):", e)
+            except Exception as e:
+                # ⚠️ BU HATA NORMAL → iterator öldü → yenisini başlat
+                print("⚠️ LIDAR stream error (restarting scan loop):", e)
+                time.sleep(0.1)   # UART sakinleşsin
+                continue          # while → yeni iter_scans()
 
-        finally:
-            self.running = False
-
-    def stop(self):
-        self._stop_flag = True
 # ==================================================
 
 
