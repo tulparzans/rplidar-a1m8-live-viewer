@@ -1,0 +1,63 @@
+# RPLIDAR A1M8 – Real-Time 2D Live Viewer (Python)
+
+A stable, real-time 2D visualization tool for **RPLIDAR A1M8**, built with  
+**Python + PyQtGraph + Qt**, designed with a ROS-like architecture.
+
+This project focuses on **stability**, **thread safety**, and **long-running operation**
+without USB replugging or frequent resets.
+
+---
+
+##Features
+
+- Real-time 2D point cloud visualization
+- PyQtGraph-based high-performance GUI
+- Thread-safe LIDAR data acquisition
+- Resistant to common A1-series errors:
+  - `Descriptor length mismatch`
+  - `Check bit not equal to 1`
+- Keyboard-controlled scan lifecycle
+- No need to unplug/replug USB
+- Designed with robotics / ROS driver principles
+
+---
+
+##Requirements
+
+- Ubuntu 20.04 / 22.04 (recommended)
+- Python 3.10+  
+- RPLIDAR A1M8
+
+---
+
+##Installation
+
+### 1) Clone the repository
+```bash
+git clone https://github.com/tulparzans/rplidar-a1m8-live-viewer.git
+cd rplidar-a1m8-live-viewer
+
+### 2)  Create virtual environment
+
+python3 -m venv lidar_env
+source lidar_env/bin/activate
+
+### 3) Install dependencies
+pip install -r requirements.txt
+
+### 4) USB Permission (Linux)
+sudo usermod -a -G dialout $USER
+
+### 5) Run
+python lidar_gui_stable.py
+
+#### Keyboard Controls
+Key	Action
+S	Start scan
+P	Pause scan
+R	Hard reset (manual)
+Q / ESC	Quit
+
+Note:
+Motor stop/start is intentionally avoided for stability.
+This follows standard practice for RPLIDAR A1-series devices.
