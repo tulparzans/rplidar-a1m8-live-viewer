@@ -27,7 +27,7 @@ class LidarWorker(threading.Thread):
     def run(self):
         while not self._stop_flag:
             try:
-                # 🔁 HER SEFERİNDE YENİ iter_scans()
+
                 for scan in self.lidar.iter_scans():
                     if self._stop_flag:
                         return
@@ -43,8 +43,8 @@ class LidarWorker(threading.Thread):
                     self.points = pts
 
             except Exception as e:
-                # ⚠️ BU HATA NORMAL → iterator öldü → yenisini başlat
-                print("⚠️ LIDAR stream error (restarting scan loop):", e)
+
+                print("LIDAR stream error (restarting scan loop):", e)
                 time.sleep(0.1)   # UART sakinleşsin
                 continue          # while → yeni iter_scans()
 
@@ -107,22 +107,22 @@ class LidarGUI(QtWidgets.QMainWindow):
             self.lidar.start_motor()
             self.worker = LidarWorker(self.lidar)
             self.worker.start()
-            print("▶ Scan started")
+            print("Scan started")
 
     def stop_scan(self):
         if self.worker:
             self.worker.stop()
             self.worker = None
             self.lidar.stop()
-            print("⏸ Scan stopped")
+            print("Scan stopped")
 
     def stop_motor(self):
         self.stop_scan()
         self.lidar.stop_motor()
-        print("⛔ Motor stopped")
+        print("Motor stopped")
 
     def hard_reset(self):
-        print("🔁 HARD reset")
+        print("HARD reset")
         self.stop_scan()
         self.lidar.stop_motor()
         time.sleep(1)
